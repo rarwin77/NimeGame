@@ -1,4 +1,5 @@
 import random
+import operator
 
 gameEnd = False
 
@@ -9,7 +10,7 @@ def numOfStacks():
     stacksList = []
     for stack in range(int(stacksCount)):
         stacksList.append(stack + 1)
-#numOfStacks()
+numOfStacks()
 
 stacksDict = {}
 def numSticksPerStack():
@@ -19,7 +20,7 @@ def numSticksPerStack():
         sticksCount = input(f"How many sticks should be in stack {stack}?:")
         stacksDict["stack " + str(stack) + ":  "] = sticksCount
     pass
-#numSticksPerStack()
+numSticksPerStack()
 
 firstOrSecond = 0
 def chooseFirstOrSecond():
@@ -51,28 +52,86 @@ def playerTurn():
     pass
 #playerTurn()
 
+bvalues = []
 def computerTurn():
     global gameEnd
+    global bvalues
+    oddness = 0
     stacksSum = 0
-    printStacks()
-    succesful = 0
-    while True:
-        computerStackChoice = random.randint(1,len(stacksDict))
-        if succesful == 1:
-            break
-        if stacksDict["stack " + str(computerStackChoice) + ":  "] != 0:
-            computerSticksRemoveCount = int(random.randint(1, int(stacksDict["stack " + str(computerStackChoice) + ":  "])))
-            stacksDict["stack " + str(computerStackChoice) + ":  "] = int(stacksDict["stack " + str(computerStackChoice) + ":  "]) - computerSticksRemoveCount
-            print(f"Computer removes {computerSticksRemoveCount} sticks from " + "stack " + str(computerStackChoice) + ":  ")
-            succesful = 1
-            for stack in stacksDict:
-                sticks = int(stacksDict.setdefault(stack))
-                stacksSum += sticks
-            if stacksSum == 0:
-                gameEnd = True
-                print('You lose')
-                break 
-#computerTurn()
+    bintotals = {}
+    stackssum = 0
+    for stack in stacksDict:
+        value = stacksDict.setdefault(stack)
+        stackssum += int(value)
+        bvalues.append(format(int(value),'b'))
+    stackssum = format(int(stackssum),'b')
+    totals = []
+    print(bvalues)
+    lastbvalue = 0
+    greatest_to_least_bvalues = []
+    for bvalue in bvalues:
+        if len(bvalue) > lastbvalue:
+            greatest_to_least_bvalues = [bvalue] + greatest_to_least_bvalues
+        else:
+            greatest_to_least_bvalues = greatest_to_least_bvalues + [bvalue]
+        lastbvalue = len(bvalue)
+    prevlengthbvalue = 0
+    for bvalue in greatest_to_least_bvalues:
+        for number in bvalue[::-1]:
+            totals.append(int(number))
+        if prevlengthbvalue == 0:
+            bincounter = 0
+        else:
+            bincounter = prevlengthbvalue - len(bvalue)
+        print(bincounter)
+        totals = totals[::-1]
+        print("total =               " + str(totals))
+        for num in range(1,len(totals)+1):
+            bintotals.setdefault(num,0)
+        print(bintotals)
+        for binary in totals: 
+            bincounter += 1
+            print("       " + str(int(binary)))
+            bintotals[bincounter] = bintotals[bincounter] + int(binary)
+            print(bintotals[bincounter])
+        print("bintotals  " + str(bintotals))
+        totals = []
+        if prevlengthbvalue == 0:
+            prevlengthbvalue = len(bvalue)      
+    magiccounter = 1
+    xorvalue = ""
+    one = 0
+    for val in bintotals:
+        val = bintotals.setdefault(val)
+        if bintotals[magiccounter]%2 == 0:
+            bintotals[magiccounter] = 1
+            one = 1
+        if bintotals[magiccounter]%2 != 0 and bintotals[magiccounter]%2 != 0.5 and one == 1:
+            bintotals[magiccounter] = 0
+        xorvalue = xorvalue + str(bintotals[magiccounter])
+        magiccounter += 1
+    print("xor: " + str(bintotals))
+    print(greatest_to_least_bvalues)
+    for bin_number in greatest_to_least_bvalues:
+        print(bin_number)
+
+
+    
+    #for val in bintotals:
+    #    val = bintotals[val]
+    #    print(val)
+    #    if val%2 == 0:
+    #        print("even")
+    #    else:
+    #        oddness = 1
+    #        print("odd")
+    #print(stackssum)
+    #for stack in stacksDict:
+    #    value = stacksDict.setdefault(stack)
+    #    if format(int(value),'b') == 
+    
+
+computerTurn()
 
 def nimGame():
     playAgain = 0
@@ -95,4 +154,4 @@ def nimGame():
     playAgain = input("Input 'yes' to play again, input 'no' to not play again:")
     if playAgain == 'yes':
         nimGame()
-nimGame()
+#nimGame()
